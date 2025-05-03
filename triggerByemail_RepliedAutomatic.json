@@ -1,0 +1,308 @@
+{
+  "name": "triggerByemail",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        -220
+      ],
+      "id": "bc936bf4-d422-4b45-b249-fbef08dc1b5d",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EnZu2gZPYJPIIuvo",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64622ecf-e514-48f9-95fc-f9f24e36fa5c",
+              "name": "email context",
+              "value": "=From {{ $json.headers.from }}\nSubject{{ $json.headers.subject }}\nEmail body{{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -420,
+        -220
+      ],
+      "id": "c290b5cc-3112-4fb1-a19f-597f447ec00d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=**Role:**\nYour task is to desire weather emailis related to a shonsership or not\n\nResponse with a json object containing the following fields:\n_** isSponsership:** can be \"true\" of \"false\"\n_** reasoning:** Explaining your answer\n\n{{ $json['email context'] }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -200,
+        -220
+      ],
+      "id": "0d5448e0-a25f-4c4a-b542-9635618883d7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -300,
+        0
+      ],
+      "id": "cd15241d-38c2-43a2-b1c9-0960bac98b01",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "FdP2630QSWlVxLQC",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"state\": \"California\",\n\t\"cities\": [\"Los Angeles\", \"San Francisco\", \"San Diego\"],\n  \"isSponsership\":true\n\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        40,
+        0
+      ],
+      "id": "f4c81aa8-1a8c-4b1d-9b24-9fb064c640c1",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "131985d5-9b1b-4dc1-bce0-d5a463c5654f",
+              "leftValue": "={{ $json.output.isSponsership }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        -220
+      ],
+      "id": "78a53ff2-aca4-4d47-b508-c9d8bb28552d",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        380,
+        -120
+      ],
+      "id": "8fdeaae0-ece3-40b6-92f6-4c335ada55eb",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=**Role:**\nyou work for a you tube channel \"ABC\" and your task is to reply to sponsorship email.\n\n**Task:**\n-Riview the email.\n-write a fiendly and professional email.\n-return only email body in html.\n-Do not include header only body.\n\n**Conditions:**\n-**content focus:** Artificial Intelligence.\n\n\n",
+              "role": "system"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        380,
+        -320
+      ],
+      "id": "9e1c722b-3840-4043-91bf-3f918af8517f",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "FdP2630QSWlVxLQC",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $json.message.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        740,
+        -320
+      ],
+      "id": "1cbf17bc-ef13-42cd-a6ee-0a6ccd269d99",
+      "name": "Gmail",
+      "webhookId": "8d303f51-4360-4863-9a96-1d780948dcb2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EnZu2gZPYJPIIuvo",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4b198935-a147-40cc-829a-e0189634c1a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3ee3ad7cb62762df127bafadc01782f2364bfe43171a29c75f53f46b31ea0258"
+  },
+  "id": "48Sk9LcGVhnEqq5y",
+  "tags": []
+}
