@@ -1,0 +1,289 @@
+{
+  "name": "RAG_BOT",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nI am your AI assistant, ask your question and provide email address. ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -2080,
+        -660
+      ],
+      "id": "79ee1cff-2b37-4c39-a71e-c84bbc7851a4",
+      "name": "When chat message received",
+      "webhookId": "0dd72532-8376-454a-8363-4c50c4e94303"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an AI assistant to summerize pdf file using the vector database which contain information about gas turbine.Then sent email this summerization. email address will be provided.\n\nProvide information how Gas turbine works and principals behind this. \n\nstructure of your response:\nexplain how a gas turbine works\nwhat are the main points for operation of gas turbine\n\nstructure of email:\nSend emails to the addresses get from the chatting. \nAdd subject to the email as \"summerized case\"\nat the end of email write best wishes.\n\nobjective:\nProvide readers a deep knowledge how gas tubnibe works in power plant efficiently\nand main points for smooth operation gas turbine a operator should know.\nThen send it to emails, generated answer will be the body of email.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -1720,
+        -660
+      ],
+      "id": "ab2de792-e947-44cb-a0fe-0fb8e7fc5363",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1860,
+        -440
+      ],
+      "id": "841535ad-98ad-4168-8c80-0e773945301b",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "FdP2630QSWlVxLQC",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1740,
+        -440
+      ],
+      "id": "bf4c07c0-88ff-47dd-b241-fe2d9c1dc0c9",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "for-docs",
+          "mode": "list",
+          "cachedResultName": "for-docs"
+        },
+        "options": {
+          "pineconeNamespace": "ForGT"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.1,
+      "position": [
+        -1720,
+        -240
+      ],
+      "id": "53239f15-6062-4bcf-9bf5-44e1dac1e078",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "B6NGL4CZBFyQbZCH",
+          "name": "PineconeApi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1640,
+        -40
+      ],
+      "id": "8c3c051e-ec4c-41ee-ba11-063b4466ddcc",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "FdP2630QSWlVxLQC",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1420,
+        -240
+      ],
+      "id": "e211b18d-8212-4422-aef3-1133bcc677a4",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "FdP2630QSWlVxLQC",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "GT9E_from_pinecone",
+        "description": "=Return documents related to gas turbine working princicles, knowledges for smooth operations and reasons for triping of gas turbine"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        -1620,
+        -440
+      ],
+      "id": "45c0c840-dbe7-4926-a761-b8c1ae2dfde2",
+      "name": "GT9E_frm_pine"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -1320,
+        -440
+      ],
+      "id": "28ca94b6-a450-45a2-bf85-d4a9d7bf6aff",
+      "name": "Gmail",
+      "webhookId": "393d5d2b-38ee-433f-bff0-981b29af360e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EnZu2gZPYJPIIuvo",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "GT9E_frm_pine",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "GT9E_frm_pine",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GT9E_frm_pine": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "96b9e494-8451-4b61-9a84-d0148b130dcb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3ee3ad7cb62762df127bafadc01782f2364bfe43171a29c75f53f46b31ea0258"
+  },
+  "id": "Rhb8JwShhyg8Fm32",
+  "tags": []
+}
