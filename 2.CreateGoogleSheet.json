@@ -1,0 +1,77 @@
+{
+  "name": "CreateGoogleSheet",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -48
+      ],
+      "id": "996a4b90-c338-46d9-894e-88b00df7c120",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "spreadsheet",
+        "title": "CreatedByn8n_1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -368,
+        -48
+      ],
+      "id": "997abd6b-6a56-4cc8-a6be-a1926ca8876c",
+      "name": "Create spreadsheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CQTikjX52mGNNpEH",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# This portion only create a new sheet\n",
+        "height": 576,
+        "width": 416
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -624,
+        -432
+      ],
+      "typeVersion": 1,
+      "id": "3fd0143d-9d63-48a0-b152-d26eabb4a2d1",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "73512a04-055a-43d7-9bb1-0b57a90f083b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3ee3ad7cb62762df127bafadc01782f2364bfe43171a29c75f53f46b31ea0258"
+  },
+  "id": "tdIWgBCXZLECKqeb",
+  "tags": []
+}
