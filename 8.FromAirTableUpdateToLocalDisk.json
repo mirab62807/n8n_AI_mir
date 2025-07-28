@@ -1,0 +1,138 @@
+{
+  "name": "8.FromAirTableUpdateToLocalDisk",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -880,
+        -576
+      ],
+      "id": "32bc06b9-a739-43ba-b60e-892b065b1c91",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appJGzqvtEJIKbThL",
+          "mode": "list",
+          "cachedResultName": "Test_1",
+          "cachedResultUrl": "https://airtable.com/appJGzqvtEJIKbThL"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbljspYekEuyInc8S",
+          "mode": "list",
+          "cachedResultName": "Table_1",
+          "cachedResultUrl": "https://airtable.com/appJGzqvtEJIKbThL/tbljspYekEuyInc8S"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        -576
+      ],
+      "id": "504b0cba-e3fc-46bd-97d1-427a03ff89df",
+      "name": "Search records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "pORcsR6UNfnZtbH8",
+          "name": "Airtable Personal Access Token account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "Name",
+        "binaryPropertyName": "Name",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -560,
+        -576
+      ],
+      "id": "1f5f528d-955b-43cb-8a77-4169d42e3020",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "C:\\Users\\mirab\\OneDrive\\Desktop\\UpdatesOfAirTable.txt",
+        "dataPropertyName": "Name",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -576
+      ],
+      "id": "0e03fe76-253f-4fc8-8ddc-ccb4ffe10524",
+      "name": "Read/Write Files from Disk"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bee2f8ef-b2ba-418e-a5f7-2271191a2b90",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3ee3ad7cb62762df127bafadc01782f2364bfe43171a29c75f53f46b31ea0258"
+  },
+  "id": "vy9ynjqkPCBbCeOf",
+  "tags": []
+}
